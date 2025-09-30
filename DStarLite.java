@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class DStarLite {
-    
+
     // This hot little number basically just helps determine the priority order of selected
     // nodes in the path. AKA the logic behind the queue, based on gCost, rhsCost of nodes
     private static class Key implements Comparable<Key> {
@@ -22,8 +22,8 @@ public class DStarLite {
     }
     
     private Node start, goal;
-    private int gridWidth, gridHeight;
-    private Set<Node> obstacles;
+    private int gridWidth, gridHeight; // Generally 144x144 for FTC field
+    private Set<Node> obstacles; // List of nodes declared as obstacles
     private Map<Node, Double> g, rhs;
     private Map<Node, Key> U;
     private double km;

@@ -1,4 +1,5 @@
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -29,6 +30,22 @@ public class Plotter extends JPanel {
                 int gridX = e.getX() / SCALE;
                 int gridY = e.getY() / SCALE;
                 setToolTipText("Grid: (" + gridX + ", " + gridY + ")");
+            }
+        });
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e){
+                int gridX = e.getX() / SCALE;
+                int gridY = e.getY() / SCALE;
+                
+                for(int i = gridX - 9; i < gridX + 10; i++){
+                    for(int j = gridY - 9; j < gridY + 10; j++){
+                        obstacles.add(new Node(i, j));
+                    }
+                }
+                dstar.updateObstacles(obstacles);
+                path = dstar.computePath();
+                repaint();
             }
         });
     }
