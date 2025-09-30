@@ -1,6 +1,9 @@
 import java.util.*;
 
 public class DStarLite {
+    
+    // This hot little number basically just helps determine the priority order of selected
+    // nodes in the path. AKA the logic behind the queue, based on gCost, rhsCost of nodes
     private static class Key implements Comparable<Key> {
         double first, second;
         
@@ -24,8 +27,7 @@ public class DStarLite {
     private Map<Node, Double> g, rhs;
     private Map<Node, Key> U;
     private double km;
-    
-    // Eight directions: up, down, left, right, and four diagonals
+
     private static final int[][] MOTIONS = {
         {0, 1}, {0, -1}, {1, 0}, {-1, 0},      // cardinal directions
         {1, 1}, {1, -1}, {-1, 1}, {-1, -1}     // diagonal directions
@@ -42,7 +44,7 @@ public class DStarLite {
         this.U = new HashMap<>();
         this.km = 0.0;
         
-        // Initialize all nodes
+        // Initialize all nodes in a 144x144 grid
         for (int i = 0; i < gridWidth; i++) {
             for (int j = 0; j < gridHeight; j++) {
                 Node node = new Node(i, j);
@@ -213,24 +215,5 @@ public class DStarLite {
         }
         
         return computePath();
-    }
-    
-    public static void main(String[] args) {
-        Node start = new Node(5, 5);
-        Node goal = new Node(45, 25);
-        
-        Set<Node> obstacles = new HashSet<>();
-        // Add some sample obstacles
-        for (int i = 10; i < 20; i++) {
-            obstacles.add(new Node(i, 15));
-        }
-        
-        DStarLite dstar = new DStarLite(start, goal, 144, 144, obstacles);
-        List<Node> path = dstar.computePath();
-        
-        System.out.println("Path found with " + path.size() + " nodes:");
-        for (Node node : path) {
-            System.out.println("(" + node.x + ", " + node.y + ")");
-        }
     }
 }

@@ -11,6 +11,7 @@ public class Plotter extends JPanel {
     private final Node start, goal;
     private static final int GRID_SIZE = 144;
     private static final int SCALE = 5;
+    private final Image backgroundImage;
 
     public Plotter(Node start, Node goal, Set<Node> initialObstacles) {
         this.start = start;
@@ -20,52 +21,8 @@ public class Plotter extends JPanel {
         this.path = dstar.computePath();
         
         setPreferredSize(new Dimension(GRID_SIZE * SCALE, GRID_SIZE * SCALE));
-        
-        // Add mouse listener for generating random obstacle patterns
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // Generate random obstacles across entire grid
-                obstacles.clear();
-                Random rand = new Random();
-                int obstacleCount = 0;
-                
-                for (int x = 0; x < GRID_SIZE; x++) {
-                    for (int y = 0; y < GRID_SIZE; y++) {
-                        Node node = new Node(x, y);
-                        
-                        // Skip start and goal positions
-                        if (node.equals(start) || node.equals(goal)) {
-                            continue;
-                        }
-                        
-                        // 1/3 chance of becoming an obstacle
-                        if (rand.nextDouble() < 1.0 / 3.0) {
-                            obstacles.add(node);
-                            obstacleCount++;
-                        }
-                    }
-                }
-                
-                System.out.println("Generated " + obstacleCount + " random obstacles");
-                
-                // Recompute path with updated obstacles
-                long startTime = System.currentTimeMillis();
-                path = dstar.updateObstacles(obstacles);
-                long endTime = System.currentTimeMillis();
-                
-                System.out.println("Path recomputed in " + (endTime - startTime) + "ms");
-                System.out.println("New path length: " + (path != null ? path.size() : 0) + " nodes");
-                
-                if (path == null || path.isEmpty() || !path.get(path.size() - 1).equals(goal)) {
-                    System.out.println("WARNING: No valid path found!");
-                }
-                
-                repaint();
-            }
-        });
-        
-        // Add mouse motion listener to show grid coordinates
+        backgroundImage = new ImageIcon("C:\\Users\\chase\\Downloads\\decode_144sq.png").getImage();
+
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
@@ -82,17 +39,18 @@ public class Plotter extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         // Draw grid
-        g2d.setColor(new Color(240, 240, 240));
+        g2d.setColor(new Color(40, 40, 40, 50));
         for (int i = 0; i <= GRID_SIZE; i++) {
-            g2d.drawLine(i * SCALE, 0, i * SCALE, GRID_SIZE * SCALE);
-            g2d.drawLine(0, i * SCALE, GRID_SIZE * SCALE, i * SCALE);
+           g2d.drawLine(i * SCALE, 0, i * SCALE, GRID_SIZE * SCALE);
+           g2d.drawLine(0, i * SCALE, GRID_SIZE * SCALE, i * SCALE);
         }
 
         // Draw obstacles
         g2d.setColor(new Color(100, 100, 100));
         for (Node obs : obstacles) {
-            g2d.fillRect(obs.x * SCALE, obs.y * SCALE, SCALE, SCALE);
+           g2d.fillRect(obs.x * SCALE, obs.y * SCALE, SCALE, SCALE);
         }
 
         // Draw path
@@ -127,21 +85,21 @@ public class Plotter extends JPanel {
         g2d.setColor(new Color(200, 0, 0));
         g2d.setStroke(new BasicStroke(2));
         g2d.drawOval(goal.x * SCALE - 4, goal.y * SCALE - 4, 8, 8);
-        
     }
 
     public static void main(String[] args) {
-        Node start = new Node((int)(Math.random()*144), (int)(Math.random()*144));
-        Node goal = new Node((int)(Math.random()*144), (int)(Math.random()*144));
+        System.out.println("Starting...");
+        
+        Node start = new Node(126, 135);
+        Node goal = new Node(70, 50);
         
         Set<Node> obstacles = new HashSet<>();
-        
+
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("D* Lite Interactive Path Plotter");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             
-            Plotter plotter = new Plotter(start, goal, obstacles);
-            frame.add(plotter);
+            frame.add(new Plotter(start, goal, obstacles));
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
