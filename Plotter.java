@@ -8,21 +8,21 @@ import java.util.List;
 public class Plotter extends JPanel {
     private List<Node> path;
     private Set<Node> obstacles;
-    private final DStarLite dstar;
     private final Node start, goal;
     private static final int GRID_SIZE = 144;
     private static final int SCALE = 5;
     private final Image backgroundImage;
+    private final Navigator navigator;
 
     public Plotter(Node start, Node goal, Set<Node> initialObstacles) {
         this.start = start;
         this.goal = goal;
         this.obstacles = new HashSet<>(initialObstacles);
-        this.dstar = new DStarLite(start, goal, GRID_SIZE, GRID_SIZE, obstacles);
-        this.path = dstar.computePath();
+        this.navigator = new Navigator(start.x, start.y, goal.x, goal.y);
+        this.path = navigator.getPath();
         
         setPreferredSize(new Dimension(GRID_SIZE * SCALE, GRID_SIZE * SCALE));
-        backgroundImage = new ImageIcon("C:\\Users\\chase\\Downloads\\decode_144sq.png").getImage();
+        backgroundImage = new ImageIcon("decode_144sq.png").getImage();
 
         addMouseMotionListener(new MouseMotionAdapter() {
             @Override
@@ -43,8 +43,7 @@ public class Plotter extends JPanel {
                         obstacles.add(new Node(i, j));
                     }
                 }
-                dstar.updateObstacles(obstacles);
-                path = dstar.computePath();
+                
                 repaint();
             }
         });

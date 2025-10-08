@@ -21,11 +21,11 @@ public class DStarLite {
         }
     }
     
-    private Node start, goal;
-    private int gridWidth, gridHeight; // Generally 144x144 for FTC field
+    private final Node start, goal;
+    private final int gridWidth, gridHeight; // Generally 144x144 for FTC field
     private Set<Node> obstacles; // List of nodes declared as obstacles
-    private Map<Node, Double> g, rhs;
-    private Map<Node, Key> U;
+    private final Map<Node, Double> g, rhs;
+    private final Map<Node, Key> U;
     private double km;
 
     private static final int[][] MOTIONS = {

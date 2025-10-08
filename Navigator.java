@@ -1,10 +1,10 @@
 import java.util.*;
 public class Navigator {
-    private List<Node> path;
-    private List<Node> significantPoints;
+    private final List<Node> path;
+    private final List<Node> significantPoints;
     private Set<Node> obstacles;
-    private DStarLite dLite;
-    private Node start, goal;
+    private final DStarLite dLite;
+    private final Node start, goal;
     private static final int GRID_SIZE = 144;
 
     public Navigator(int sx, int sy, int gx, int gy){
@@ -14,8 +14,10 @@ public class Navigator {
 
         this.dLite = new DStarLite(this.start, this.goal, GRID_SIZE, GRID_SIZE, obstacles);
         this.path = dLite.computePath();
+        System.out.println(path.size() + " Nodes");
 
         this.significantPoints = extractSignificantPoints();
+        System.out.println(significantPoints.size() + " Significant Points");
     }
 
     private void initObstacles(){
@@ -47,8 +49,13 @@ public class Navigator {
 
             if(slope1 == slope2){
                 sigPoints.remove(current);
+                i--;
             }
         }
         return sigPoints;
+    }
+
+    public List<Node> getPath(){
+        return this.path;
     }
 }
