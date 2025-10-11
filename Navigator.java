@@ -1,61 +1,40 @@
 import java.util.*;
 public class Navigator {
-    private final List<Node> path;
-    private final List<Node> significantPoints;
-    private Set<Node> obstacles;
-    private final DStarLite dLite;
-    private final Node start, goal;
-    private static final int GRID_SIZE = 144;
+    
+    private Set<Point2D> obstacles;
+    private DStarLite dLite;
+    private PathSmoother pathSmoother;
 
-    public Navigator(int sx, int sy, int gx, int gy){
-        this.start = new Node(sx, sy);
-        this.goal = new Node(gx, gy);
-        initObstacles();
-
-        this.dLite = new DStarLite(this.start, this.goal, GRID_SIZE, GRID_SIZE, obstacles);
-        this.path = dLite.computePath();
-        System.out.println(path.size() + " Nodes");
-
-        this.significantPoints = extractSignificantPoints();
-        System.out.println(significantPoints.size() + " Significant Points");
+    public Navigator(Set<Point2D> obstacles, Point2D start, Point2D goal){
+        this.dLite = new DStarLite(start, goal, 144, 144, obstacles);
+        this.pathSmoother = new PathSmoother(dLite);
     }
 
-    private void initObstacles(){
-        this.obstacles = new HashSet();
-        for(int i = 0; i < 144; i++){
+    public List<Pose> getFullPath(Point2D start, Point2D goal){
+        List<Point2D> smoothPath = pathSmoother.computeSmoothPath();
+        
+        float[] headings = new float[smoothPath.size()];
+        int x, y, nextX, nextY;
+        for(int i = 0; i < smoothPath.size() - 1; i++){
+            //  LATER: Make option to follow path at an angle separate from tangent to path
+            x = smoothPath.get(i).x;
+            y = smoothPath.get(i).y;
 
+            nextX = smoothPath.get(i+1).x;
+            nextY = smoothPath.get(i+1).y;
+
+            headings[i] = (float)Math.atan((nextY - y) / (nextX - x));
         }
-    }
+        headings[headings.length-1] = 90.0f;
 
-    private List<Node> extractSignificantPoints() {
-        List<Node> sigPoints = this.path;
-        Node successor, current, previous;
-        double slope1, slope2;
-        for(int i = 1; i < this.path.size() - 1; i++){
-            successor = this.path.get(i+1);
-            current = this.path.get(i);
-            previous = this.path.get(i-1);
-
-            if(current.x != previous.x){
-                slope1 = (current.y - previous.y) / (current.x - previous.x);
-            } else {
-                slope1 = Double.POSITIVE_INFINITY;
-            }
-            if(current.x != successor.x){
-                slope2 = (successor.y - current.y) / (successor.x - current.x);
-            } else {
-                slope2 = Double.POSITIVE_INFINITY;
-            }
-
-            if(slope1 == slope2){
-                sigPoints.remove(current);
-                i--;
-            }
+        ArrayList<Pose> finalPath = new ArrayList<Pose>();
+        for(int i = 0; i < headings.length; i++){
+            finalPath.add(new Pose(smoothPath.get(i).x, smoothPath.get(i).y, headings[i]));
         }
-        return sigPoints;
+        return finalPath;
     }
 
-    public List<Node> getPath(){
-        return this.path;
+    public void changeObstacles(Set<Point2D> newObstacles){
+        this.obstacles = new HashSet<>(newObstacles);
     }
 }
