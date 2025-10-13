@@ -6,13 +6,15 @@ public class Navigator {
     private PathSmoother pathSmoother;
 
     public Navigator(Set<Point2D> obstacles, Point2D start, Point2D goal){
+        System.out.println("Navigator Created");
         this.dLite = new DStarLite(start, goal, 144, 144, obstacles);
+        System.out.println("DStarCreated");
         this.pathSmoother = new PathSmoother(dLite);
     }
 
     public List<Pose> getFullPath(Point2D start, Point2D goal){
         List<Point2D> smoothPath = pathSmoother.computeSmoothPath();
-        
+        System.out.println("Path Smoothed");
         float[] headings = new float[smoothPath.size()];
         int x, y, nextX, nextY;
         for(int i = 0; i < smoothPath.size() - 1; i++){
