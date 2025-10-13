@@ -5,12 +5,17 @@ public class Point2D {
         this.x = x;
         this.y = y;
     }
-
+    
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {return true;}
-        if (o == null || getClass() != o.getClass()) {return false;}
-        Point2D Point2D = (Point2D) o;
-        return x == Point2D.x && y == Point2D.y;
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Point2D other = (Point2D) obj;
+        return x == other.x && y == other.y;
+    }
+    
+    @Override
+    public int hashCode() {
+        return 31 * x + y;
     }
 }

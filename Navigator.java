@@ -5,15 +5,15 @@ public class Navigator {
     private DStarLite dLite;
     private PathSmoother pathSmoother;
 
-    public Navigator(Set<Point2D> obstacles, Point2D start, Point2D goal){
-        System.out.println("Navigator Created");
-        this.dLite = new DStarLite(start, goal, 144, 144, obstacles);
-        System.out.println("DStarCreated");
+    public Navigator(){
+        this.dLite = new DStarLite();
         this.pathSmoother = new PathSmoother(dLite);
     }
 
     public List<Pose> getFullPath(Point2D start, Point2D goal){
-        List<Point2D> smoothPath = pathSmoother.computeSmoothPath();
+        this.dLite.initializePath(start, goal);
+        this.obstacles = new HashSet<Point2D>();
+        List<Point2D> smoothPath = pathSmoother.computeSmoothPath(this.obstacles);
         System.out.println("Path Smoothed");
         float[] headings = new float[smoothPath.size()];
         int x, y, nextX, nextY;
@@ -25,7 +25,14 @@ public class Navigator {
             nextX = smoothPath.get(i+1).x;
             nextY = smoothPath.get(i+1).y;
 
-            headings[i] = (float)Math.atan((nextY - y) / (nextX - x));
+            if(nextX - x != 0){
+                headings[i] = (float)(Math.atan((nextY - y) / (nextX - x)));
+            } else if(nextY - y > 0){
+                headings[i] = 90;
+            } else {
+                headings[i] = 3.0f * (float)Math.PI / 2.0f;
+            }
+        
         }
         headings[headings.length-1] = 90.0f;
 
@@ -37,6 +44,6 @@ public class Navigator {
     }
 
     public void changeObstacles(Set<Point2D> newObstacles){
-        this.obstacles = new HashSet<>(newObstacles);
+        this.obstacles = new HashSet<Point2D>(newObstacles);
     }
 }

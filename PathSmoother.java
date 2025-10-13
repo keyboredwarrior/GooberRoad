@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class PathSmoother{
-    private List<Point2D> rawPath, smoothedPath;
+    private List<Point2D> rawPath = null, smoothedPath;
     private List<Point2D> significantPoints;
     private DStarLite dStarLite;
 
@@ -9,17 +9,22 @@ public class PathSmoother{
         this.dStarLite = dLite;
     }
     
-    private void computeRawPath() {
-        this.rawPath = dStarLite.computePath();
+    private void computeRawPath(Set<Point2D> obstacles) {
+        if(this.rawPath == null) {
+            rawPath = dStarLite.computePath(obstacles);
+        } else {
+            rawPath = dStarLite.replanPath(obstacles);
+        }
     }
 
     public List<Point2D> getRawPath() {
         return this.rawPath;
     }
 
-    public List<Point2D> computeSmoothPath() {
-        computeRawPath();
+    public List<Point2D> computeSmoothPath(Set<Point2D> obstacles) {
+        computeRawPath(obstacles);
         extractSignificantPoints();
+        this.smoothedPath = new ArrayList<Point2D>();
 
         for(float t = 0; t < (float)significantPoints.size() - 3.0; t += 0.005){
             this.smoothedPath.add(getSplinePoint(t));
@@ -80,6 +85,21 @@ public class PathSmoother{
             }
         }
         
+        int startX = rawPath.get(0).x;
+        int startY = rawPath.get(0).y;
+
+        int xDif1 = startX - rawPath.get(1).x;
+        int yDif1 = startY - rawPath.get(1).y;
+
+        sigPoints.add(0, new Point2D(startX + xDif1, startY + yDif1));
+
+        int endX = rawPath.getLast().x;
+        int endY = rawPath.getLast().y;
+
+        int xDif2 = endX - rawPath.get(rawPath.size()-2).x;
+        int yDif2 = endY - rawPath.get(rawPath.size()-2).y;
+
+        sigPoints.add(new Point2D(endX + xDif2, endY + yDif2));
         this.significantPoints = sigPoints;
     }
 }
