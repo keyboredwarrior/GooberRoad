@@ -1,4 +1,6 @@
+package PathCreation;
 import java.util.*;
+
 
 public class DStarLite {
     // the key for comparing two nodes when ordering the queue/path
@@ -150,8 +152,8 @@ public class DStarLite {
     private List<Point2D> getNeighbors(Point2D node) {
         List<Point2D> neighbors = new ArrayList<>();
         for(int[] motion : MOTIONS){
-            int newX = node.x + motion[0];
-            int newY = node.y + motion[1];
+            float newX = node.x + motion[0];
+            float newY = node.y + motion[1];
 
             if(newX >= 0 && newX < SIDE_LENGTH && newY >= 0 && newY < SIDE_LENGTH){
                 Point2D neighbor = new Point2D(newX, newY);
@@ -184,9 +186,6 @@ public class DStarLite {
             current = Collections.min(gList.entrySet(), Map.Entry.comparingByValue()).getKey();
             path.add(current);
             gList.clear();
-        }
-        for(Point2D point : path) {
-            System.out.println(point.x + ", " + point.y);
         }
         return path;
     }

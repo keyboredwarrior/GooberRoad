@@ -1,7 +1,8 @@
+package PathCreation;
 public class Point2D {
-    public int x, y;
+    public float x, y;
     
-    public Point2D(int x, int y) {
+    public Point2D(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -16,6 +17,6 @@ public class Point2D {
     
     @Override
     public int hashCode() {
-        return 31 * x + y;
+        return 31 * (int)(x + y);
     }
 }

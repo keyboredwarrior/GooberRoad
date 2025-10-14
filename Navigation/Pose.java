@@ -1,3 +1,4 @@
+package Navigation;
 public class Pose {
     private final float x;
     private final float y;
