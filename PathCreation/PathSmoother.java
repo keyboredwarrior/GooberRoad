@@ -24,10 +24,7 @@ public class PathSmoother{
 
     public List<Point2D> computeSmoothPath(Set<Point2D> obstacles) {
         computeRawPath(obstacles);
-        System.out.println("Raw Path Generated " + rawPath.size() + " nodes.");
         extractSignificantPoints();
-        //this.significantPoints = rawPath;
-        System.out.println(significantPoints.size() + " Significant Points");
         this.smoothedPath = new ArrayList<Point2D>();
 
         int degree = 3;
@@ -42,7 +39,6 @@ public class PathSmoother{
             smoothedPath.add(p);
         }
 
-        System.out.println("Path Smoothed");
         return this.smoothedPath;
     }
 

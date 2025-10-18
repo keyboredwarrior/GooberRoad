@@ -14,7 +14,7 @@ public class Plotter extends JPanel {
     private List<Point2D> path;
     private Point2D start, goal;
     private static final int GRID_SIZE = 144;
-    private static final double SCALE = 10.0;
+    private static final double SCALE = 5.0;
     private final Image backgroundImage;
     Set<Point2D> obstacles;
 
