@@ -2,17 +2,17 @@ package Navigation;
 import java.util.*;
 
 import PathCreation.DStarLite;
-import PathCreation.PathSmoother;
+import PathCreation.PathGenerator;
 import PathCreation.Point2D;
 public class Navigator {
     
     private Set<Point2D> obstacles;
     private DStarLite dLite;
-    private PathSmoother pathSmoother;
+    private PathGenerator pathSmoother;
 
     public Navigator(){
         this.dLite = new DStarLite();
-        this.pathSmoother = new PathSmoother(dLite);
+        this.pathSmoother = new PathGenerator(dLite);
     }
 
     public Navigator(Object VisionPipeline){
