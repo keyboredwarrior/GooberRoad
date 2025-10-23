@@ -2,40 +2,52 @@ package PathCreation;
 import java.util.*;
 
 public class PathGenerator{
+
     private static List<Point2D> rawPath = null;
     private static PathPoint[] smoothedPath;
-    private static PathPoint[] straightPath;    private static float[] tVals;
+    private static PathPoint[] straightPath;
     private static List<Point2D> significantPoints;
     private static DStarLite dStarLite;
+    private static Set<Point2D> obstacles;
 
-    public PathGenerator(DStarLite dLite) {
-        PathGenerator.dStarLite = dLite;
-        PathGenerator.tVals = new float[200];
+    public PathGenerator() {
+        PathGenerator.dStarLite = new DStarLite();
         PathGenerator.smoothedPath = new PathPoint[200];
     }
 
-    public PathPoint[] getSmoothPath() {
-        return PathGenerator.smoothedPath;
+
+
+    public Path genSmoothPath(Point2D start, Point2D goal, Set<Point2D> obstacles) {
+        PathGenerator.dStarLite.initializePath(start, goal);
+        PathGenerator.obstacles = obstacles;
+        computeSmoothPath();
+        return new Path(PathGenerator.smoothedPath);
     }
 
-    public PathPoint[] getStraightPath() {
+    public Path replanSmoothPath(Set<Point2D> obstacles) {
+        PathGenerator.obstacles = obstacles;
+        computeSmoothPath();
+        return new Path(PathGenerator.smoothedPath);
+    }
+
+
+
+    public PathPoint[] genStraightPath() {
         return PathGenerator.straightPath;
     }
-    
-    public float[] getTVals() {
-        return PathGenerator.tVals;
-    }
 
-    private void computeRawPath(Set<Point2D> obstacles) {
+    private void computeRawPath() {
         if(PathGenerator.rawPath == null) {
-            rawPath = dStarLite.computePath(obstacles);
+            rawPath = dStarLite.computePath(PathGenerator.obstacles);
         } else {
-            rawPath = dStarLite.replanPath(obstacles);
+            rawPath = dStarLite.replanPath(PathGenerator.obstacles);
         }
     }
 
-    public void computeSmoothPath(Set<Point2D> obstacles) {
-        computeRawPath(obstacles);
+
+
+    public void computeSmoothPath() {
+        computeRawPath();
         extractSignificantPoints();
 
         int degree = 3;
@@ -84,6 +96,8 @@ public class PathGenerator{
             }
         }
     }
+
+
 
     private void extractSignificantPoints() {
         List<Point2D> sigPoints = new ArrayList<Point2D>();

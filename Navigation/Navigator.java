@@ -12,7 +12,7 @@ public class Navigator {
 
     public Navigator(){
         this.dLite = new DStarLite();
-        this.pathSmoother = new PathGenerator(dLite);
+        this.pathSmoother = new PathGenerator();
     }
 
     public Navigator(Object VisionPipeline){
